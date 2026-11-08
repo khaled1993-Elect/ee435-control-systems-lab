@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="An interactive first- and second-order control systems lab with symbolic equations, moving poles, s-plane geometry, response graphs, and steady-state error.">
+<title>EE435 · Control Systems Lab</title>
+<style>:root{--ink:#193340;--muted:#60777d;--line:#dbe5e4;--paper:#f3f6f5;--teal:#087e80;--orange:#be681f;--purple:#8064b2;font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);font-size:14px}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--paper)}button,input,select{font:inherit}button,summary{cursor:pointer}button{touch-action:manipulation}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #60b4b2;outline-offset:3px}select{color:var(--ink);background:#f7faf8;border:1px solid #b9cec4;border-radius:7px;padding:6px 8px;font-size:11px;max-width:100%}input[type=checkbox]{accent-color:var(--teal);width:14px;height:14px;vertical-align:middle}.range{width:100%;accent-color:var(--teal);cursor:pointer;margin:5px 0}.panel{background:white;border:1px solid var(--line);border-radius:12px;min-width:0}.math{font-family:Cambria,"Times New Roman",serif;font-size:21px;line-height:1.65}.math sup{font-size:.64em;line-height:0}.math sub{font-size:.65em}.frac{display:inline-flex;vertical-align:middle;flex-direction:column;text-align:center;line-height:1.16;margin:0 3px}.frac>span:first-child{padding:0 4px 3px;border-bottom:1px solid currentColor}.frac>span:last-child{padding:3px 4px 0}h1,h2,h3,p{margin:0}h1{font-size:23px;letter-spacing:-.5px;font-weight:650}h2{font-size:15px;font-weight:650}h3{font-size:13px;font-weight:650}.orange{color:var(--orange)}.teal{color:var(--teal)}.purple{color:var(--purple)}
+.topbar{background:white;border-bottom:1px solid var(--line)}.topbar-inner{max-width:1640px;margin:auto;padding:10px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px;font-size:12px}.brand-divider{color:#a9b8b9}.logo{width:25px;height:25px;border-radius:7px;background:var(--ink);display:grid;place-items:center;color:white;font:italic 20px Georgia,serif}.topnote{font-size:10px;color:var(--muted)}main{max-width:1640px;margin:auto;padding:14px 20px}.hero{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:12px}.subtitle{font-size:11px;color:var(--muted);margin-top:4px}.stable{display:flex;align-items:center;gap:7px;font-size:11px;color:#23674f;background:#e9f4ed;border:1px solid #ccdfd3;border-radius:20px;padding:7px 11px;white-space:nowrap}.dot{width:6px;height:6px;border-radius:50%;background:#39835e}.stable.unstable{background:#fff0e9;color:#a94934;border-color:#edc9bc}.stable.unstable .dot{background:#be583c}.stable.marginal{background:#fff6df;color:#936b22;border-color:#ead9a9}.stable.marginal .dot{background:#b98a2e}
+.lab-workspace{display:grid;grid-template-columns:202px minmax(0,1fr);gap:14px;align-items:start}.experiment-controls{padding:14px;position:sticky;top:12px;max-height:calc(100vh - 135px);overflow:auto}.controls-title{font-size:13px;margin-bottom:10px}.control-label{display:flex;justify-content:space-between;align-items:center;gap:7px;color:var(--muted);font-size:10px;font-weight:650;margin-bottom:6px}.model-control select,.window-control select{width:100%;font-size:11px;padding:7px}.input-control,.parameter-control,.window-control{margin-top:12px}.input-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.input-btn{display:flex;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--line);border-radius:7px;background:white;color:var(--muted);font-size:9px;padding:6px 2px;white-space:nowrap}.input-btn svg{width:18px;height:15px}.input-btn path{fill:none;stroke:currentColor;stroke-width:2}.input-btn.active{background:#eaf6f1;border-color:#73b4a3;color:#136f62;font-weight:650}.value-badge{font-variant-numeric:tabular-nums;background:#edf5f2;color:var(--teal);font-weight:650;border-radius:5px;padding:3px 6px;font-size:11px;white-space:nowrap}.range-ends{display:flex;justify-content:space-between;font-size:9px;color:var(--muted)}.case-presets{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:15px}.case-presets .control-label,.preset-note{grid-column:1/-1}.case-presets button{font-size:9px;padding:6px 3px;border:1px solid var(--line);background:white;color:var(--muted);border-radius:6px}.case-presets button:hover{background:#edf5f0;border-color:#90b8a5}.case-presets button.active{background:#e9f5ef;color:#146f59;border-color:#81b59e;font-weight:650}.preset-note{font-size:9px;color:var(--muted);line-height:1.5;margin-top:2px}.reset{width:100%;border:1px solid var(--line);border-radius:7px;background:white;color:var(--muted);padding:8px;font-size:11px;margin-top:14px}
+.lab-content{min-width:0}.response-equation{padding:11px 16px;margin-bottom:12px;border-left:3px solid #73b4a3;background:#f7fbf9}.equation-label{font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:var(--teal);font-weight:650;margin-bottom:1px}.response-equation .math{font-size:23px;line-height:1.6;overflow-wrap:anywhere}.equation-definitions{font-size:10px;color:var(--muted);line-height:1.6;margin-top:3px}.comparison-grid{display:grid;grid-template-columns:1fr;gap:12px;align-items:stretch}.model-second .comparison-grid{grid-template-columns:minmax(300px,.95fr) minmax(0,1.6fr)}.panel-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px;padding:12px 13px 0}.panel-header select{font-size:10px;padding:5px;max-width:200px}.pole-panel{padding-bottom:10px;display:flex;flex-direction:column}.pole-panel #poleChart{display:block;width:100%;height:clamp(200px,calc(100vh - 480px),300px);margin:6px 0 0}#poleChart text{font-family:"Segoe UI",Arial,sans-serif}.pole-values{font-family:Cambria,"Times New Roman",serif;font-size:14px;text-align:center;line-height:1.6;margin:0 10px 8px;color:#a84939}.geometry-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 12px}.geometry-metrics>div{background:#f3f7f4;border:1px solid #e3ebe5;border-radius:7px;padding:6px;text-align:center;min-width:0}.geometry-metrics .math{font-size:15px;line-height:1.25}.geometry-metrics strong{display:block;color:var(--teal);font-size:11px;font-weight:650;margin-top:2px}.plane-scale-note{font-size:10px;color:var(--muted);line-height:1.5;margin:8px 12px 0}.plot-panel{padding:0 12px 10px}.plot-panel .panel-header{padding:12px 0 0;align-items:center}.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:9px;color:var(--muted)}.legend-item{display:flex;align-items:center;gap:4px;white-space:nowrap}.swatch{width:17px;border-top:2px solid var(--teal);display:inline-block}.swatch.input{border-color:var(--orange);border-top-style:dashed}.swatch.error-gap{height:10px;width:0;border-top:0;border-left:2px solid var(--purple)}.graph-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:9px 0 2px;font-size:10px;color:var(--muted)}.graph-toolbar select{font-size:10px;padding:4px;max-width:185px}.measurement-toggle{display:flex;align-items:center;gap:3px;margin-left:auto;white-space:nowrap;cursor:pointer}.plot-panel #chart{display:block;width:100%;height:auto;margin:4px 0 0}.gridline{stroke:#e8eeeb;stroke-width:1}.tick{font:10px "Segoe UI",Arial,sans-serif;fill:#71868a}.axis-title{font:10px "Segoe UI",Arial,sans-serif;fill:#587178}.curve{fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.annotation{font:10px "Segoe UI",Arial,sans-serif;font-weight:650}.plot-scale-note{font-size:9px;color:#648074;line-height:1.5;margin:2px 0 7px}.plot-scale-note.off-scale{color:#aa5d2f}.time-bar{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:8px}.play{flex-shrink:0;background:#edf5f2;color:var(--teal);border:1px solid #c6ded2;border-radius:6px;padding:6px 9px;font-size:10px}.probe-label{font-size:10px;color:var(--muted);white-space:nowrap}.time-bar .range{min-width:50px;flex:1}.response-readouts{display:grid;grid-template-columns:repeat(3,minmax(0,.8fr)) minmax(125px,1.4fr);margin-top:9px;border-top:1px solid var(--line);padding-top:8px;gap:6px}.readout{font-size:10px;line-height:1.2}.readout strong{display:block;font-size:13px;margin-top:4px;font-weight:650;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.ess-block{border-left:1px solid var(--line);padding-left:10px;display:flex;flex-wrap:wrap;align-content:center;align-items:center;gap:1px 5px}.mini-label,.domain-label{display:block;font-size:9px;color:var(--muted);font-weight:650;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}.ess-block .mini-label{font-size:8px;flex-basis:100%;margin-bottom:0}.ess-main.math{font-size:17px;line-height:1.4}.ess-main .no-limit{font-family:"Segoe UI",Arial,sans-serif;font-size:11px}.ess-current{font-size:10px;color:var(--teal)}.case-explanation{font-size:11px;line-height:1.55;margin:9px 2px 12px;color:var(--muted)}
+.lab-content>details{margin-top:8px}.lab-content>details>summary{padding:12px 15px;font-size:12px;font-weight:650;color:var(--ink)}details[open]>summary{border-bottom:1px solid var(--line)}.geometry-details>p,.geometry-details>.math{margin:12px 16px;font-size:12px;line-height:1.7}.geometry-details>.math{font-size:20px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:16px}.detail-grid p{font-size:11px;color:var(--muted);line-height:1.8;margin-top:8px}.detail-grid .math{font-size:20px}.diagram-layout{display:grid;grid-template-columns:minmax(150px,.7fr) minmax(280px,1.3fr) minmax(210px,1fr);gap:14px;align-items:center;padding:18px 16px}.signal-card{border:1px solid #e2d5c2;border-radius:9px;background:#fffaf3;min-width:0}.signal-heading{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:11px}.signal-dot{width:6px;height:6px;border-radius:50%}.signal-dot.orange{background:var(--orange)}.signal-dot.teal{background:var(--teal)}.signal-name{font-size:10px;color:var(--orange)}.domain-row{border-top:1px solid #ece2d4;padding:12px}.signal-card .math{font-size:20px;overflow-wrap:anywhere}.output-card{background:#f1f8f6;border-color:#cce3db}.system-center{min-width:0;text-align:center}#feedbackDiagram{display:block;width:100%;height:auto;max-height:200px}#feedbackDiagram text{font-family:"Segoe UI",Arial,sans-serif;fill:var(--ink)}#feedbackDiagram .diagram-math text{font-family:Cambria,Georgia,serif;font-style:italic;font-size:20px}#feedbackDiagram .junction-sign{font-size:21px;fill:#67838b}#feedbackDiagram .block-label{font-size:19px}#feedbackDiagram .block-math{font-family:Cambria,Georgia,serif;font-size:27px}#feedbackDiagram .feedback-label{font-size:15px;fill:var(--muted)}.equivalent-block{display:inline-block;border:1px solid #cce3db;border-radius:8px;padding:10px;background:#f5faf7}.equivalent-block .math{font-size:17px}.error-bridge{display:grid;grid-template-columns:1fr 1fr;gap:15px;background:#f5f8f6;border-top:1px solid var(--line);padding:15px 17px}.error-bridge .math{font-size:18px}.error-bridge .secondary-math{font-size:16px;color:var(--muted)}.board-note{font-size:11px;color:var(--muted);line-height:1.7;padding:12px 17px}.first-order-insight{margin-top:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:15px}.first-order-insight p{font-size:11px;color:var(--muted);line-height:1.7}.first-order-insight .pole{flex-shrink:0;text-align:right}.pole-number{font-size:11px;color:var(--muted)}.model-second .first-order-insight{display:none}
+.measurement-content{padding:14px 16px;margin:10px 0;background:#f7faf8;border:1px solid #dbe6dd;border-radius:10px}.measurement-notice{font-size:11px;color:var(--muted);margin:0 0 12px;line-height:1.7}.measurement-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px}.measurement-options>span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}.measurement-options label{display:flex;align-items:center;gap:4px;cursor:pointer}.measurement-options label:has(input:disabled){opacity:.45;cursor:default}.tolerance-label{margin-left:auto}.measurement-values{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:14px}.measurement-values>div{background:white;border:1px solid #dfe8e2;border-radius:8px;padding:10px}.measurement-values span{font-size:11px;color:var(--muted);display:block}.measurement-values strong{font-size:18px;font-weight:650;display:block;margin:5px 0;color:var(--teal)}.measurement-values small{font-size:10px;line-height:1.5;color:var(--muted);display:block}.measurement-equations{margin-top:14px;border-top:1px solid #dfe8e2;padding-top:12px}.measurement-equations summary{cursor:pointer;color:var(--teal);font-size:12px;font-weight:650}.measurement-formulas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.measurement-formulas article{background:white;padding:14px;border:1px solid #dfe8e2;border-radius:8px;min-width:0}.measurement-formulas h3{font-size:12px;color:var(--muted);margin-bottom:8px}.measurement-formulas .math{font-size:20px;white-space:normal;line-height:1.8}.measurement-formulas p,.formula-source{font-size:11px;line-height:1.7;color:var(--muted);margin:10px 0 0}.footer{display:flex;align-items:center;justify-content:space-between;gap:15px;font-size:10px;color:var(--muted);padding:15px 0 0}.footer button{border:0;background:none;color:var(--teal);font-size:11px;white-space:nowrap}
+@media(min-width:1450px){.lab-workspace{grid-template-columns:215px minmax(0,1fr)}.model-second .comparison-grid{grid-template-columns:minmax(350px,1fr) minmax(0,1.65fr)}.response-equation .math{font-size:25px}}
+@media(max-width:1150px) and (min-width:1001px){main{padding:12px}.lab-workspace{grid-template-columns:180px minmax(0,1fr);gap:10px}.experiment-controls{padding:11px}.model-second .comparison-grid{grid-template-columns:minmax(280px,1fr) minmax(0,1.4fr)}.legend{gap:6px}.probe-label{display:none}.measurement-toggle{margin-left:0}.response-equation .math{font-size:21px}}
+@media(max-width:1000px){.lab-workspace{display:block}.experiment-controls{position:static;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px;max-height:none;overflow:visible}.controls-title{grid-column:1/-1;margin:0}.input-control,.parameter-control,.window-control,.case-presets,.reset{margin:0}.model-control{grid-column:1}.input-control{grid-column:2}.experiment-controls #secondOrderControls{grid-column:3/5;display:grid;grid-template-columns:1fr 1fr;gap:12px;grid-row:2/5}.case-presets{grid-column:1/-1;grid-template-columns:repeat(5,1fr)}.case-presets .control-label{display:none}.preset-note{font-size:9px}.window-control{grid-column:1}.reset{grid-column:2;align-self:end}.model-second .comparison-grid{grid-template-columns:minmax(280px,.9fr) minmax(0,1.2fr)}.diagram-layout{grid-template-columns:1fr 1.5fr}.output-card{grid-column:1/-1}.response-equation .math{font-size:22px}.topnote{display:none}.hero{gap:8px}.stable{font-size:10px}}
+@media(max-width:700px){main{padding:12px}.topbar-inner{padding:9px 12px}.brand{font-size:11px;gap:7px}.hero{align-items:flex-start;flex-wrap:wrap}h1{font-size:21px}.experiment-controls{grid-template-columns:1fr 1fr;gap:13px}.experiment-controls #secondOrderControls{grid-column:1/-1;grid-row:auto}.case-presets{grid-template-columns:repeat(3,1fr)}.window-control{grid-column:1}.reset{grid-column:2}.model-second .comparison-grid{grid-template-columns:1fr}.pole-panel #poleChart{height:245px}.pole-panel{padding-bottom:12px}.response-equation{padding:10px 12px}.response-equation .math{font-size:21px}.response-readouts{grid-template-columns:repeat(3,minmax(0,.8fr)) minmax(110px,1.4fr)}.probe-label{display:none}.diagram-layout,.detail-grid{grid-template-columns:1fr}.output-card{grid-column:auto}.system-center{width:min(100%,500px);margin:auto}.error-bridge{grid-template-columns:1fr}.measurement-values{grid-template-columns:repeat(3,minmax(0,1fr))}.measurement-formulas{grid-template-columns:1fr}.tolerance-label{margin-left:0}.footer{flex-wrap:wrap}.first-order-insight{flex-direction:column;align-items:start}.first-order-insight .pole{text-align:left}}
+@media(max-width:380px){.measurement-values{grid-template-columns:repeat(2,minmax(0,1fr))}.legend{gap:6px}.measurement-toggle{margin-left:0}.graph-toolbar select{max-width:170px}}
+@media print{.experiment-controls,.topbar,.footer,.graph-toolbar,.time-bar{display:none}.lab-workspace{display:block}.model-second .comparison-grid{grid-template-columns:1fr 1.5fr}.response-equation{break-inside:avoid}.comparison-grid{break-inside:avoid}details:not([open]){display:none}}
+
+@media(min-width:1001px){.response-equation{display:grid;grid-template-columns:80px minmax(0,1fr);column-gap:10px;align-items:center;padding:8px 14px}.response-equation .equation-label{line-height:1.6}.response-equation .math{font-size:22px;line-height:1.3}.response-equation .math .frac{font-size:18px}.response-equation .equation-definitions{grid-column:2;margin-top:0;line-height:1.5}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><span class="logo" aria-hidden="true">ƒ</span><strong>EE435</strong><span class="brand-divider">/</span>Control Systems Lab</div><span class="topnote">Transient response & steady-state error</span></div></header>
+<main>
+<div class="hero"><div><h1 id="systemTitle">Second-order system</h1><p class="subtitle">Change the parameters. Compare the poles and the response.</p></div><div class="stable" id="stabilityBadge"><span class="dot"></span><span id="stabilityText">Stable · underdamped</span></div></div>
+
+<div class="lab-workspace">
+<aside class="panel experiment-controls" aria-label="Experiment controls">
+<h2 class="controls-title">Explore the system</h2>
+<div class="model-control"><label class="control-label" for="systemModel">System model</label><select id="systemModel"><option value="firstOrder">First-order system</option><option value="secondOrder" selected>Second-order system</option></select></div>
+<div class="input-control"><div class="control-label">Choose a unit input</div><div class="input-tabs" role="group" aria-label="Input type">
+<button class="input-btn active" data-input="step" aria-pressed="true"><svg viewBox="0 0 30 26" aria-hidden="true"><path d="M2 23H9V5H28"/></svg><span>Unit step</span></button>
+<button class="input-btn" data-input="ramp" aria-pressed="false"><svg viewBox="0 0 30 26" aria-hidden="true"><path d="M2 23H7L28 3"/></svg><span>Unit ramp</span></button>
+<button class="input-btn" data-input="impulse" aria-pressed="false"><svg viewBox="0 0 30 26" aria-hidden="true"><path d="M2 23H28M15 23V3M10 9L15 3L20 9"/></svg><span>Unit impulse</span></button>
+</div></div>
+<div class="parameter-control" id="firstOrderControls" hidden><div class="control-label"><label for="tau">Time constant, <i>T</i></label><output class="value-badge" id="tauValue" for="tau">1.0 s</output></div><input class="range" id="tau" type="range" min="0.2" max="5" step="0.1" value="1"><div class="range-ends"><span>0.2 s · faster</span><span>5 s · slower</span></div></div>
+<div id="secondOrderControls"><div class="parameter-control"><div class="control-label"><label for="zeta">Damping ratio, ζ</label><output class="value-badge" id="zetaValue" for="zeta">0.30</output></div><input class="range" id="zeta" type="range" min="-1.5" max="2.5" step="0.01" value="0.3"><div class="range-ends"><span>−1.5 · unstable</span><span>2.5 · overdamped</span></div></div><div class="parameter-control frequency-control"><div class="control-label"><label for="wn">Natural frequency, ω<sub>n</sub></label><output class="value-badge" id="wnValue" for="wn">1.0 rad/s</output></div><input class="range" id="wn" type="range" min="0.5" max="5" step="0.1" value="1"><div class="range-ends"><span>0.5 rad/s</span><span>5 rad/s</span></div></div><div class="case-presets" role="group" aria-label="Compare damping cases"><span class="control-label">Compare damping cases</span><button data-zeta="0" title="ζ = 0">Undamped</button><button data-zeta="0.3" title="ζ = 0.3">Underdamped</button><button data-zeta="1" title="ζ = 1">Critical</button><button data-zeta="1.3" title="ζ = 1.3">Overdamped</button><button data-zeta="-0.03" title="ζ = -0.03">Unstable</button><p class="preset-note">Presets: step · ω<sub>n</sub> = 1 · 16 s.</p></div></div>
+<div class="window-control"><label class="control-label" for="duration">Graph time window</label><select id="duration"><option value="4">0–4 seconds</option><option value="8">0–8 seconds</option><option value="16" selected>0–16 seconds</option><option value="30">0–30 seconds</option></select></div>
+<button class="reset" id="reset" title="Reset the selected model and unit-step input">↺ Reset experiment</button>
+</aside>
+<div class="lab-content model-second" id="labContent">
+
+<section class="panel response-equation" aria-labelledby="responseEquationTitle"><div class="equation-label" id="responseEquationTitle">Output · t ≥ 0</div><div class="math" id="timeOutput" aria-live="polite"></div><div class="equation-definitions" id="equationDefinitions"></div></section>
+<div class="comparison-grid">
+<section class="panel pole-panel" id="polePanel" aria-labelledby="poleTitle"><div class="panel-header"><h2 id="poleTitle">s-plane</h2><select aria-label="S-plane view" id="planeView"><option value="geometry">Pole geometry · larger circle</option><option value="wide">All real poles · wide view</option></select></div><svg id="poleChart" viewBox="0 0 600 430" role="img" aria-labelledby="poleChartTitle poleChartDesc"><title id="poleChartTitle">Closed-loop poles in the s-plane</title><desc id="poleChartDesc">Moving poles with a dotted natural-frequency circle and labeled projections.</desc></svg><div class="pole-values" id="poleValues"></div><div class="geometry-metrics"><div><span class="math">σ<sub>d</sub></span><strong id="sigmaValue"></strong></div><div><span class="math">ω<sub>d</sub></span><strong id="wdValue"></strong></div><div><span class="math">β</span><strong id="betaValue"></strong></div></div><p class="plane-scale-note" id="planeScaleNote"></p></section>
+<section class="panel plot-panel" aria-labelledby="plotTitle"><div class="panel-header plot-header"><div><h2 id="plotTitle">Time response</h2></div><div class="legend"><span class="legend-item"><i class="swatch input"></i>Input r(t)</span><span class="legend-item"><i class="swatch"></i>Output c(t)</span><span class="legend-item"><i class="swatch error-gap"></i>Error gap e(t)</span></div></div>
+<div class="graph-toolbar"><label for="verticalView">Vertical view</label><select id="verticalView"><option value="standard">Standard · fixed range</option><option value="detail" id="stepDetailOption">Step detail · −0.15 to 1.85</option><option value="wide">Wide · 3× range</option><option value="veryWide">Very wide · 10× range</option></select><label class="measurement-toggle"><input id="showMeasurements" type="checkbox"> Measurements</label></div>
+<svg id="chart" viewBox="0 0 800 300" role="img" aria-labelledby="chartTitle chartDesc"><title id="chartTitle">Input and output versus time</title><desc id="chartDesc">Dashed orange input and solid teal output. Move the time cursor below to inspect the response.</desc></svg><p class="plot-scale-note" id="plotScaleNote"></p>
+<div class="time-bar"><button class="play" id="play" aria-label="Animate time cursor">▶ Play</button><label for="probe" class="probe-label">Time cursor</label><input class="range" id="probe" type="range" min="0" max="16" step="0.01" value="1"><output class="value-badge" id="probeValue" for="probe">1.00 s</output></div><div class="response-readouts"><div class="readout orange">r(t)<strong id="readInput"></strong></div><div class="readout teal">c(t)<strong id="readOutput"></strong></div><div class="readout purple">e(t)<strong id="readError"></strong></div><div class="ess-block"><span class="mini-label">Steady-state error</span><div class="ess-main math">e<sub>ss</sub> = <span id="essSymbol">0</span></div><div class="ess-current" id="essCurrent"></div></div></div>
+</section>
+</div>
+<p class="case-explanation" id="caseExplanation" aria-live="polite"></p><div class="panel first-order-insight takeaway"><div><span class="mini-label" id="insightTitle">What to notice</span><p id="insightText"></p></div><div class="pole"><span class="mini-label">Closed-loop poles</span><div class="math" id="poleSummary">s = −1/T</div><span class="pole-number" id="poleValue"></span></div></div>
+<div class="measurement-content" id="measurementContent" hidden>
+<p id="measurementNotice" class="measurement-notice"></p>
+<div id="measurementOptions" class="measurement-options"><span>Graph markers</span><label><input id="mark_td" type="checkbox" checked> t<sub>d</sub></label><label><input id="mark_tr" type="checkbox" checked> t<sub>r</sub></label><label><input id="mark_tp" type="checkbox" checked> t<sub>p</sub></label><label><input id="mark_mp" type="checkbox" checked> M<sub>p</sub></label><label><input id="mark_ts" type="checkbox" checked> t<sub>s</sub> + band</label><label><input id="mark_envelope" type="checkbox"> Envelope</label><label class="tolerance-label" for="settlingTolerance">Settling band <select id="settlingTolerance"><option value="0.02">2%</option><option value="0.05">5%</option></select></label></div>
+<div class="measurement-values" id="measurementValues"><div><span>Delay · t<sub>d</sub></span><strong id="value_td"></strong><small id="note_td"></small></div><div><span>Rise · t<sub>r</sub></span><strong id="value_tr"></strong><small id="note_tr"></small></div><div><span>Peak · t<sub>p</sub></span><strong id="value_tp"></strong><small id="note_tp"></small></div><div><span>Overshoot · M<sub>p</sub></span><strong id="value_mp"></strong><small id="note_mp"></small></div><div><span>Settling · t<sub>s</sub></span><strong id="value_ts"></strong><small id="note_ts"></small></div></div>
+<details class="measurement-equations" id="measurementEquations"><summary>Equations & definitions · live with the sliders</summary><div class="measurement-formulas"><article><h3>Delay time</h3><div class="math" id="formula_td"></div><p id="formulaNote_td"></p></article><article><h3>Rise time</h3><div class="math" id="formula_tr"></div><p id="formulaNote_tr"></p></article><article><h3>Peak time</h3><div class="math" id="formula_tp"></div><p>First overshoot peak, for 0 &lt; ζ &lt; 1.</p></article><article><h3>Percent overshoot</h3><div class="math" id="formula_mp"></div><p id="formulaNote_mp"></p></article><article><h3>Settling time</h3><div class="math" id="formula_ts"></div><p id="formulaNote_ts"></p></article><article><h3>Response envelope</h3><div class="math" id="formula_envelope"></div><p id="formulaNote_envelope"></p></article></div><p class="formula-source">EE435 · Chapter 5, Part B · step-response specifications (slides 2–7). Numerical crossings use the analytic response, independently of the graph window.</p></details>
+</div>
+<details class="panel system-board system-details"><summary>System block diagram & Laplace expressions</summary>
+
+<div class="diagram-layout">
+<section class="signal-card input-card" aria-labelledby="inputTitle" aria-live="polite"><div class="signal-heading"><span class="signal-dot orange"></span><h3 id="inputTitle">Input</h3><span class="signal-name" id="inputName">Unit step</span></div><div class="domain-row"><div class="domain-label">Time domain</div><div class="math" id="timeInput"></div></div><div class="domain-row"><div class="domain-label">S domain</div><div class="math" id="laplaceInput"></div></div></section>
+
+<div class="system-center">
+<svg id="feedbackDiagram" viewBox="0 0 540 220" role="img" aria-labelledby="feedbackTitle feedbackDesc"><title id="feedbackTitle">First-order unity negative-feedback system</title><desc id="feedbackDesc">R(s) enters a summing junction with negative unity feedback from C(s). The error E(s) passes through G(s) = 1/(Ts), producing C(s).</desc><defs><marker id="diagramArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#67838b"/></marker></defs>
+<g class="signal-lines" fill="none" stroke="#67838b" stroke-width="2"><path d="M9 82H111" marker-end="url(#diagramArrow)"/><circle cx="132" cy="82" r="20" fill="white"/><path d="M152 82H225" marker-end="url(#diagramArrow)"/><rect x="228" y="36" width="163" height="92" rx="9" fill="#eef8f5" stroke="#80b9af"/><path d="M391 82H531" marker-end="url(#diagramArrow)"/><path d="M451 82V173H132V104" marker-end="url(#diagramArrow)"/></g>
+<circle cx="451" cy="82" r="3.5" fill="#67838b"/><g class="diagram-math"><text x="25" y="61">R(s)</text><text x="171" y="61">E(s)</text><text x="474" y="61">C(s)</text></g><text x="99" y="66" class="junction-sign">+</text><text x="103" y="124" class="junction-sign">−</text><text x="310" y="25" class="block-label" text-anchor="middle">G(s)</text><text x="310" y="68" id="forwardNum" class="block-math" text-anchor="middle">ωₙ²</text><path d="M242 79H377" stroke="#254c51" stroke-width="1.3"/><text x="310" y="109" id="forwardDen" class="block-math" text-anchor="middle">s(s + 2ζωₙ)</text><text x="291" y="201" class="feedback-label" text-anchor="middle">H(s) = 1</text>
+</svg>
+<div class="equivalent-block"><div class="domain-label">Equivalent closed-loop block</div><div class="math"><span>F(s) = </span><span class="frac"><span>C(s)</span><span>R(s)</span></span><span> = </span><span class="frac"><span id="closedNum">ω<sub>n</sub>²</span><span id="closedDen">s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²</span></span></div></div>
+
+</div>
+
+<section class="signal-card output-card" aria-labelledby="outputTitle"><div class="signal-heading"><span class="signal-dot teal"></span><h3 id="outputTitle">Output in the S domain</h3></div><div class="domain-row"><div class="domain-label">S domain</div><div class="math" id="sOutput"></div></div></section>
+</div>
+
+<div class="error-bridge" aria-live="polite"><div class="error-relation"><span class="mini-label">At the summing junction</span><div class="math">e(t) = r(t) − c(t)</div><div class="math secondary-math">E(s) = R(s) − C(s)</div></div><div class="error-detail"><span class="mini-label">Tracking error</span><div class="math" id="errorExpression"></div><div class="math secondary-math" id="sError"></div></div></div>
+<p class="board-note" id="essDescription"></p>
+</details>
+<details class="panel geometry-details" id="geometryDetails"><summary>Pole geometry & symbol definitions</summary><div class="math pole-equation" id="poleEquation"></div><p id="geometryNote"></p><p id="sigmaMeaning"></p></details><details class="panel details"><summary>Tracking error & final value theorem</summary><div class="detail-grid"><div><div class="mini-label">From input to output</div><div class="math">C(s) = F(s)R(s)</div><p>Multiply the input’s S-domain expression by the equivalent closed-loop transfer function. Its inverse Laplace transform gives the time-domain output on the diagram.</p></div><div><div class="mini-label">From error to its final value</div><div class="math">e<sub>ss</sub> = lim<sub>s→0</sub> sE(s)</div><p id="fvtNote"></p><p class="plot-info" id="plotInfo"></p></div></div></details>
+</div>
+</div>
+<footer class="footer"><span>Unit inputs · u(t): unit step · δ(t): ideal unit impulse · All time-domain responses are causal.</span><button id="download">Download for offline use ↓</button></footer>
+</main>
+<script>'use strict';
+(() => {
+  const $ = id => document.getElementById(id);
+  const fmt = (n, digits = 3) => Number((Math.abs(n) < 1e-10 ? 0 : n).toFixed(digits)).toString();
+  const fraction = (top, bottom) => `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
+  const decay = 'e<sup>−t/T</sup>';
+  const ns = 'http://www.w3.org/2000/svg';
+  // This module is inserted inside the lab's closure by the offline HTML builder.
+function secondOrderGeometry(params) {
+  const {zeta:z,wn:w}=params, a=z*w;
+  if(Math.abs(z)<1) {
+    const wd=w*Math.sqrt(1-z*z);
+    return {a,sigma:Math.abs(a),wd,beta:Math.acos(z),complex:true,repeated:false,poles:[{re:-a,im:wd},{re:-a,im:-wd}]};
+  }
+  const b=w*Math.sqrt(Math.max(0,z*z-1));
+  return {a,sigma:Math.abs(a),wd:0,beta:null,complex:false,repeated:b<1e-9,poles:[{re:-a+b,im:0},{re:-a-b,im:0}]};
+}
+
+function secondOrderCase(params) {
+  const z=params.zeta;
+  if(z<0)return {name:'Unstable',label:Math.abs(z)<1?'Unstable · growing oscillations':'Unstable · growing real modes',tone:'unstable',explanation:'Negative damping places both poles in the right half-plane. The natural response grows instead of decaying.'};
+  if(z===0)return {name:'Undamped',label:'Undamped · marginal natural response',tone:'marginal',explanation:'The poles lie on the imaginary axis. Natural oscillations persist. This model is not BIBO stable: resonant sinusoidal forcing can produce an unbounded output.'};
+  if(z<1)return {name:'Underdamped',label:'Stable · underdamped',tone:'stable',explanation:'Complex conjugate poles lie in the left half-plane. Oscillations decay; a unit-step response overshoots before approaching 1.'};
+  if(z===1)return {name:'Critically damped',label:'Stable · critically damped',tone:'stable',explanation:'Two equal negative real poles give a nonoscillatory response. Critical damping is different from marginal stability.'};
+  return {name:'Overdamped',label:'Stable · overdamped',tone:'stable',explanation:'Two distinct negative real poles give a sum of decaying real modes, with no oscillation.'};
+}
+
+function secondOrderSample(t,params,type) {
+  const {zeta:z,wn:w}=params, g=secondOrderGeometry(params), a=z*w, x=w*t;
+  let c;
+  // A local power series avoids subtracting nearly equal terms near t = 0.
+  if(Math.abs(x)<.05) {
+    const coefficients=[0,1];
+    for(let n=0;n<15;n++)coefficients[n+2]=(-2*z*(n+1)*coefficients[n+1]-coefficients[n])/((n+2)*(n+1));
+    c=0;
+    for(let n=0;n<coefficients.length;n++) {
+      if(type==='impulse')c+=w*coefficients[n]*x**n;
+      else if(type==='step')c+=coefficients[n]*x**(n+1)/(n+1);
+      else c+=coefficients[n]*x**(n+2)/((n+1)*(n+2)*w);
+    }
+  } else if(g.complex) {
+    const b=g.wd, q=Math.exp(-a*t), cs=Math.cos(b*t), sn=Math.sin(b*t);
+    if(type==='impulse')c=w*w/b*q*sn;
+    else if(type==='step')c=1-q*(cs+a/b*sn);
+    else c=t-2*a/(w*w)+q*(2*a/(w*w)*cs+(2*a*a/(w*w)-1)/b*sn);
+  } else if(g.repeated) {
+    const q=Math.exp(-a*t);
+    if(type==='impulse')c=w*w*t*q;
+    else if(type==='step')c=1-(1+a*t)*q;
+    else c=t-2/a+(t+2/a)*q;
+  } else {
+    const p=g.poles[0].re, q=g.poles[1].re, ep=Math.exp(p*t), eq=Math.exp(q*t), k=w*w/(p-q);
+    if(type==='impulse')c=k*(ep-eq);
+    else if(type==='step')c=1+k*(ep/p-eq/q);
+    else c=t-2*a/(w*w)+k*(ep/(p*p)-eq/(q*q));
+  }
+  const r=type==='step'?1:type==='ramp'?t:0;
+  return {r,c,e:r-c};
+}
+
+function secondOrderResponse(params,type) {
+  const {zeta:z}=params, g=secondOrderGeometry(params), W='ω<sub>n</sub>', B='ω<sub>d</sub>', S='σ<sub>d</sub>';
+  const exp=`e<sup>${z<0?'+':'−'}σ<sub>d</sub>t</sup>`;
+  let output,definitions;
+  if(z===0) {
+    output=type==='step'?`1 − cos(${W}t)`:type==='ramp'?`t − ${fraction(`sin(${W}t)`,W)}`:`${W} sin(${W}t)`;
+    definitions=`ζ = 0; ω<sub>d</sub> = ω<sub>n</sub>; β = 90°.`;
+  } else if(g.complex) {
+    if(type==='step')output=`1 − ${exp}[cos(${B}t) ${z<0?'−':'+'} ${fraction(S,B)}sin(${B}t)]`;
+    else if(type==='impulse')output=`${fraction(W+'²',B)}${exp} sin(${B}t)`;
+    else output=`t − ${fraction('2ζ',W)} + ${exp}[${fraction('2ζ',W)}cos(${B}t) + ${fraction('2ζ² − 1',B)}sin(${B}t)]`;
+    definitions=`σ<sub>d</sub> = |ζ|ω<sub>n</sub>; ω<sub>d</sub> = ω<sub>n</sub>√(1 − ζ²); β = cos<sup>−1</sup>(ζ).`;
+  } else if(g.repeated) {
+    if(z>0)output=type==='step'?`1 − (1 + ${W}t)e<sup>−ω<sub>n</sub>t</sup>`:type==='impulse'?`${W}²t e<sup>−ω<sub>n</sub>t</sup>`:`t − ${fraction('2',W)} + (t + ${fraction('2',W)})e<sup>−ω<sub>n</sub>t</sup>`;
+    else output=type==='step'?'1 − (1 − pt)e<sup>pt</sup>':type==='impulse'?`${W}²t e<sup>pt</sup>`:`t + ${fraction('2',W)} + (t − ${fraction('2',W)})e<sup>pt</sup>`;
+    definitions=z>0?'ζ = 1; the repeated pole is p = −ω<sub>n</sub>.':'ζ = −1; the repeated pole is p = +ω<sub>n</sub>.';
+  } else {
+    const P='p<sub>1</sub>', Q='p<sub>2</sub>', ep='e<sup>p₁t</sup>', eq='e<sup>p₂t</sup>';
+    if(type==='step')output=`1 + ${fraction(`${Q}${ep} − ${P}${eq}`,`${P} − ${Q}`)}`;
+    else if(type==='impulse')output=`${fraction(W+'²',`${P} − ${Q}`)}(${ep} − ${eq})`;
+    else output=`t − ${fraction('2ζ',W)} + ${fraction(W+'²',`${P} − ${Q}`)}[${fraction(ep,P+'²')} − ${fraction(eq,Q+'²')}]`;
+    definitions='p<sub>1,2</sub> = −ζω<sub>n</sub> ± ω<sub>n</sub>√(ζ² − 1). These are the signed pole locations.';
+  }
+  const polynomial=`s² + 2ζ${W}s + ${W}²`;
+  const D=type==='step'?`s(${polynomial})`:type==='ramp'?`s²(${polynomial})`:polynomial;
+  const error=type==='step'?'1 − c(t)':type==='ramp'?'t − c(t)':'δ(t) − c(t)';
+  const errorS=fraction(type==='impulse'?`s(s + 2ζ${W})`:`s + 2ζ${W}`,type==='ramp'?`s(${polynomial})`:polynomial);
+  return {output,definitions,outputS:fraction(W+'²',D),error,errorS,ess:z>0?(type==='ramp'?fraction('2ζ',W):'0'):'Does not exist'};
+}
+
+const secondOrderModel={
+  id:'secondOrder',name:'Second-order system',forwardNumerator:'ωₙ²',forwardDenominator:'s(s + 2ζωₙ)',closedNumerator:'ω<sub>n</sub>²',closedDenominator:'s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²',
+  getResponse:secondOrderResponse,sample:secondOrderSample,
+  finalError:({zeta,wn},type)=>zeta>0?(type==='ramp'?2*zeta/wn:0):null,
+  describe(params,type) {
+    const {zeta:z,wn:w}=params, current=secondOrderCase(params);
+    const steady=z<=0?'There is no finite steady-state tracking error: the response '+(z===0?'continues to oscillate.':'grows without settling.'):
+      type==='ramp'?`The unit-ramp tracking error approaches 2ζ/ωₙ = ${fmt(2*z/w)}. The output keeps increasing with the input.`:
+      type==='step'?'The output approaches 1. The unit-step tracking error approaches zero.':'After the ideal unit impulse, the output decays to zero and the long-time tracking error is zero.';
+    return {essNote:steady,insightTitle:current.label,insight:current.explanation+' Changing ωₙ changes the response time scale; changing ζ changes the damping case.',plotNote:type==='impulse'?'The arrow represents an ideal unit impulse. For t > 0, the reference is zero.':'The violet line measures the signed tracking error r(t) − c(t) at the time cursor.'};
+  }
+};
+
+
+  // Inputs describe the reference signal, independently of the selected system.
+  const inputTypes = {
+    step: {name:'Unit step', time:'u(t)', laplace:fraction('1','s'), value:() => 1},
+    ramp: {name:'Unit ramp', time:'t u(t)', laplace:fraction('1','s²'), value:t => t},
+    impulse: {name:'Unit impulse', time:'δ(t)', laplace:'1', value:() => 0, singularAtOrigin:true}
+  };
+
+  // System-specific equations and response logic live here. A second-order model
+  // can supply the same interface without changing signal cards or graph controls.
+  const systemModels = {
+    secondOrder:secondOrderModel,
+    firstOrder: {
+      id:'firstOrder', name:'First-order systems',
+      parameters:[{key:'T', label:'Time constant', unit:'s', min:.2, max:5, step:.1, initial:1}],
+      forwardDenominator:'Ts', closedDenominator:'Ts + 1',
+      responses:{
+        step:{output:`1 − ${decay}`, outputS:fraction('1','s(Ts + 1)'), error:decay, errorS:fraction('T','Ts + 1'), ess:'0'},
+        ramp:{output:`t − T + T${decay}`, outputS:fraction('1','s²(Ts + 1)'), error:`T(1 − ${decay})`, errorS:fraction('T','s(Ts + 1)'), ess:'T'},
+        impulse:{output:`${fraction('1','T')}${decay}`, outputS:fraction('1','Ts + 1'), error:`δ(t) − ${fraction('1','T')}${decay}`, errorS:fraction('Ts','Ts + 1'), ess:'0'}
+      },
+      sample(t, params, type) {
+        const {T} = params, q = Math.exp(-t/T), rise = -Math.expm1(-t/T);
+        if (type === 'step') return {r:1, c:rise, e:q};
+        if (type === 'ramp') return {r:t, c:t-T*rise, e:T*rise};
+        return {r:0, c:q/T, e:-q/T}; // Regular part for t > 0; input is a Dirac impulse.
+      },
+      finalError(params, type) {return type === 'ramp' ? params.T : 0;},
+      describe(params, type) {
+        const {T} = params;
+        if (type === 'step') return {
+          essNote:'For a unit step, the output approaches 1 and the tracking error approaches zero.',
+          insightTitle:'At t = T, the output reaches 63.2%',
+          insight:`With the current T = ${fmt(T)} s, c(T) = 0.632. A smaller T gives a faster response, without overshoot. The approximate 2% settling time is 4T = ${fmt(4*T)} s.`,
+          plotNote:'The vertical gap between the input and output is e(t). The gap decreases to zero.'
+        };
+        if (type === 'ramp') return {
+          essNote:'For a unit ramp, input and output keep increasing. Their difference approaches T, so the steady-state error is T.',
+          insightTitle:'The output follows with a constant long-term gap',
+          insight:`As time increases, c(t) approaches t − T. The output follows the input’s slope but lags it by T seconds. With the current T = ${fmt(T)} s, the long-term vertical gap is ${fmt(T)}.`,
+          plotNote:'The two curves eventually have the same slope. Their vertical gap approaches T.'
+        };
+        return {
+          essNote:'After the unit impulse, the input is zero and the output decays to zero. Thus eₛₛ = 0; this does not mean the impulse was tracked exactly.',
+          insightTitle:'At t = T, 36.8% of the initial output remains',
+          insight:`The output starts at c(0⁺) = 1/T and decays exponentially. With the current T = ${fmt(T)} s, c(0⁺) = ${fmt(1/T)}. A smaller T gives a taller response that decays faster.`,
+          plotNote:'The arrow represents an ideal unit impulse; its height is symbolic. For t > 0, r(t) = 0.'
+        };
+      }
+    }
+  };
+
+  const initialState = (modelId='secondOrder') => ({modelId, type:'step', params:{T:1,zeta:.3,wn:1}, duration:16, probe:1, planeView:'geometry', verticalView:'standard', measurements:false, tolerance:.02, marks:{td:true,tr:true,tp:true,mp:true,ts:true,envelope:false}});
+  const state = initialState();
+  const model = () => systemModels[state.modelId];
+  const sample = t => model().sample(t, state.params, state.type);
+  let running = false, lastFrame = 0, frameId = 0;
+
+  function svgElement(tag, attributes = {}, text) {
+    const node = document.createElementNS(ns, tag);
+    Object.entries(attributes).forEach(([key,value]) => node.setAttribute(key,value));
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function formatPole(p) {
+  if(Math.abs(p.im)<1e-9)return fmt(p.re);
+  return fmt(p.re)+(p.im>=0?' + j':' − j')+fmt(Math.abs(p.im));
+}
+
+function renderPolePlane() {
+  if(state.modelId!=='secondOrder')return;
+  const {zeta:z,wn:w}=state.params, geometry=secondOrderGeometry(state.params), current=secondOrderCase(state.params);
+  const {poles,complex,repeated,sigma,wd,beta}=geometry, svg=$('poleChart');
+  $('caseExplanation').textContent=z<0?'Right-half-plane poles produce a growing response.':z===0?'Imaginary-axis poles produce sustained oscillations.':z<1?'Complex poles in the left half-plane produce decaying oscillations.':z===1?'The repeated negative pole gives the fastest nonoscillatory response for this fixed ωₙ.':'Two distinct negative poles give a nonoscillatory response; the slower pole governs the long tail.';
+  $('poleEquation').innerHTML=complex?`p<sub>1,2</sub> = ${z<0?'+':'−'}σ<sub>d</sub> ± jω<sub>d</sub>`:repeated?`p<sub>1</sub> = p<sub>2</sub> = ${z<0?'+':'−'}ω<sub>n</sub>`:'p<sub>1,2</sub> = −ζω<sub>n</sub> ± ω<sub>n</sub>√(ζ² − 1)';
+  $('poleValues').textContent=poles.map((p,i)=>'p'+(i+1)+' = '+formatPole(p)).join('   ;   ')+'   [s⁻¹]';
+  $('sigmaValue').textContent=complex||repeated?fmt(sigma)+' s⁻¹':'—';
+  $('sigmaMeaning').textContent=complex?'|Re(p)| = |ζ|ωₙ':repeated?'Magnitude of the repeated real pole':'Complex-pole quantity';
+  $('wdValue').textContent=complex?fmt(wd)+' rad/s':repeated?'0 rad/s':'—';
+  $('betaValue').textContent=complex?fmt(beta*180/Math.PI,1)+'°':repeated&&z>0?'0° (limit)':'—';
+  $('geometryNote').textContent=complex?'The dotted circle has radius ωₙ. At fixed ωₙ, changing ζ moves the complex poles along this circle. β is measured from the negative real axis, and cos β = ζ.':repeated?'The two poles coincide on the real axis. At ζ = 1, this is the leftmost point of the ωₙ circle, with ω_d = 0 and β = 0° in the limit.':'The dotted circle remains a reference of radius ωₙ. Real poles move along the real axis; they do not stay on the circle. The complex-pole angle β and oscillation frequency ω_d do not apply.';
+
+  svg.replaceChildren(svgElement('title',{id:'poleChartTitle'},current.label+' — closed-loop poles'),svgElement('desc',{id:'poleChartDesc'},'Poles '+poles.map(formatPole).join(' and ')+'. The dotted circle has radius omega n. Complex-pole projections show sigma d and plus or minus j omega d; the radial line shows omega n and the angle beta is measured from the negative real axis.'));
+  // Fix the axes for every damping ratio. Only omega_n may change this scale.
+  // A centered geometry view prioritizes the circle; a manual wide view fits all real poles.
+  const cx=300,cy=207.5, extent=w*(state.planeView==='wide'?3.3:.97), scale=165/extent;
+  svg.setAttribute('data-axis-extent',extent);svg.setAttribute('data-units-to-pixels',scale);
+  const x=v=>cx+v*scale,y=v=>cy-v*scale;
+  const text=(px,py,label,attrs={})=>{const node=svgElement('text',{x:px,y:py,fill:'#60777d','font-size':17,...attrs},label);svg.append(node);return node;};
+  const mathLabel=(px,py,prefix,symbol,subscript,attrs={})=>{const node=text(px,py,'',attrs);node.append(svgElement('tspan',{},prefix+symbol),svgElement('tspan',{'baseline-shift':'sub','font-size':'70%'},subscript));return node;};
+  const line=(x1,y1,x2,y2,attrs={})=>svg.append(svgElement('line',{x1,y1,x2,y2,stroke:'#dce6e1','stroke-width':1,...attrs}));
+  const defs=svgElement('defs'), arrow=svgElement('marker',{id:'planeArrow',viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:5,markerHeight:5,orient:'auto'});
+  arrow.append(svgElement('path',{d:'M0 0L10 5L0 10Z',fill:'#80938e'}));defs.append(arrow);svg.append(defs);
+  svg.append(svgElement('rect',{x:45,y:25,width:cx-45,height:365,rx:8,fill:'#f1f8f4'}));
+  svg.append(svgElement('rect',{x:cx,y:25,width:555-cx,height:365,rx:8,fill:'#fff5ef'}));
+  text(60,44,'LEFT HALF-PLANE',{'font-size':12,fill:'#6e9b80','letter-spacing':1});
+  text(540,44,'RIGHT HALF-PLANE',{'font-size':12,fill:'#bd947a','letter-spacing':1,'text-anchor':'end'});
+  const tick=niceStep(extent*2);
+  for(let v=Math.ceil(((50-cx)/scale)/tick)*tick;v<=(550-cx)/scale+tick*1e-7;v+=tick){
+    if(Math.abs(v)<1e-9)continue;
+    line(x(v),45,x(v),385);text(x(v),cy+16,fmt(v),{'text-anchor':'middle','font-size':18});
+  }
+  for(let v=Math.ceil(-extent/tick)*tick;v<=extent+tick*1e-7;v+=tick) {
+    if(Math.abs(v)<1e-9)continue;
+    line(50,y(v),550,y(v));
+    if(!complex||Math.abs(Math.abs(v)-wd)*scale>19)text(cx+7,y(v)+4,fmt(v),{'font-size':18});
+  }
+  line(48,cy,555,cy,{stroke:'#80938e','stroke-width':1.4,'marker-end':'url(#planeArrow)'});
+  line(cx,390,cx,25,{stroke:'#80938e','stroke-width':1.4,'marker-end':'url(#planeArrow)'});
+  text(554,cy-10,'σ = Re(s)',{'text-anchor':'end',fill:'#314f58','font-size':17});
+  text(cx+11,25,'jω = j Im(s)',{fill:'#314f58','font-size':17});
+  text(cx+7,cy+16,'0',{'font-size':18});
+  svg.append(svgElement('circle',{id:'frequencyCircle',cx,cy,r:w*scale,fill:'none',stroke:'#8baaa2','stroke-width':1.5,'stroke-dasharray':'2 5','data-radius':w}));
+  if(complex) {
+    const upper=poles[0],px=x(upper.re),py=y(upper.im);
+    line(px,py,px,y(-upper.im),{stroke:'#8baaa2','stroke-dasharray':'5 4','stroke-width':1.4});
+    line(px,py,cx,py,{stroke:'#8baaa2','stroke-dasharray':'5 4','stroke-width':1.4});
+    line(px,y(-upper.im),cx,y(-upper.im),{stroke:'#8baaa2','stroke-dasharray':'5 4','stroke-width':1.4});
+    line(cx,cy,px,py,{stroke:'#087e80','stroke-width':2});
+    text((cx+px)/2+(z<0?9:-15),(cy+py)/2-9,'ωₙ',{fill:'#087e80','font-size':16});
+    mathLabel(px,cy+35,z<0?'+':'−','σ','d',{'text-anchor':'middle',fill:'#506e75','font-size':18});
+    mathLabel(cx+(px<cx?10:-10),py+4,'+j','ω','d',{'text-anchor':px<cx?'start':'end',fill:'#506e75','font-size':18});
+    mathLabel(cx+(px<cx?10:-10),y(-upper.im)+4,'−j','ω','d',{'text-anchor':px<cx?'start':'end',fill:'#506e75','font-size':18});
+    const radius=Math.min(36,w*scale*.55),arc=[];
+    for(let i=0;i<=40;i++){const a=beta*i/40;arc.push((i?'L':'M')+(cx-radius*Math.cos(a))+' '+(cy-radius*Math.sin(a)));}
+    svg.append(svgElement('path',{id:'betaArc',d:arc.join(' '),fill:'none',stroke:'#8064b2','stroke-width':1.8}));
+    text(cx-(radius+13)*Math.cos(beta/2),cy-(radius+13)*Math.sin(beta/2),'β',{fill:'#8064b2','font-size':17,'text-anchor':'middle'});
+  } else {
+    text(x(0)-w*scale*.68,cy-w*scale*.72,'ωₙ reference',{fill:'#7b9d92','font-size':11,'text-anchor':'middle'});
+  }
+  poles.forEach((p,i)=>{
+    if(repeated&&i===1)return;
+    const rawX=x(p.re),px=Math.max(57,Math.min(543,rawX)),py=y(p.im),off=rawX<57||rawX>543;
+    const group=svgElement('g',{id:'poleMark'+i,'data-re':p.re,'data-im':p.im,'data-off-scale':off});
+    if(off){
+      const sign=rawX<57?-1:1;
+      group.append(svgElement('path',{d:`M${px-sign*10} ${py-6}L${px} ${py}L${px-sign*10} ${py+6}`,fill:'none',stroke:'#c45743','stroke-width':3}));
+      svg.append(group);text(px-sign*8,py+25,'p'+(i+1)+' beyond view',{fill:'#b64e3d','text-anchor':sign<0?'start':'end','font-size':11});
+      return;
+    }
+    for(const d of [-1,1])group.append(svgElement('line',{x1:px-6,y1:py-6*d,x2:px+6,y2:py+6*d,stroke:'#c45743','stroke-width':3,'stroke-linecap':'round'}));
+    svg.append(group);
+    const labelRight=px<100||(px<=500&&p.re>0);
+    text(px+(labelRight?10:-10),py+(p.im>=0?-13:22),repeated?'p₁ = p₂ (×2)':'p'+(i+1),{fill:'#b64e3d','text-anchor':labelRight?'start':'end','font-size':17});
+  });
+  $('planeScaleNote').textContent=poles.some(p=>x(p.re)<57||x(p.re)>543)?'Arrow: pole beyond view. Select “All real poles”.':'Equal axis units · scale fixed as ζ changes.';
+}
+
+  // Step specifications are computed independently of the visible time window.
+let measurementCache={key:'',value:null};
+function stepMeasurements(modelId,params,tolerance) {
+  const second=modelId==='secondOrder',z=params.zeta,w=params.wn;
+  if(second&&z<=0)return null;
+  const response=t=>systemModels[modelId].sample(t,params,'step').c;
+  const bisect=(fn,left,right)=>{
+    const sign=fn(left)>0;
+    for(let i=0;i<65;i++){const mid=(left+right)/2;if((fn(mid)>0)===sign)left=mid;else right=mid;}
+    return (left+right)/2;
+  };
+  const under=second&&z<1,wd=under?w*Math.sqrt(1-z*z):null,beta=under?Math.acos(z):null;
+  const crossing=level=>{
+    let right=under?(Math.PI-beta)/wd:second?1/w:params.T;
+    while(response(right)<level)right*=2;
+    return bisect(t=>response(t)-level,0,right);
+  };
+  const td=crossing(.5),riseStart=under?0:crossing(.1),riseEnd=under?(Math.PI-beta)/wd:crossing(.9);
+  const tp=under?Math.PI/wd:null,mp=under?Math.exp(-Math.PI*z/Math.sqrt(1-z*z)):0;
+  let ts;
+  if(under){
+    // Extrema occur at n*pi/wd, with error magnitude exp(-z*w*n*pi/wd).
+    // Find the last extremum outside the band, then its following band crossing.
+    const last=Math.max(0,Math.ceil(Math.log(1/tolerance)*wd/(z*w*Math.PI))-1);
+    ts=bisect(t=>Math.abs(1-response(t))-tolerance,last*Math.PI/wd,((last+1)*Math.PI-beta)/wd);
+  }else ts=crossing(1-tolerance);
+  return {td,tr:riseEnd-riseStart,riseStart,riseEnd,tp,mp,ts,under,approx:under?(tolerance===.02?4:3)/(z*w):null,tolerance};
+}
+function currentMeasurements(){
+  if(state.type!=='step')return null;
+  const key=JSON.stringify([state.modelId,state.params,state.tolerance]);
+  if(measurementCache.key!==key)measurementCache={key,value:stepMeasurements(state.modelId,state.params,state.tolerance)};
+  return measurementCache.value;
+}
+function renderMeasurements(){
+  const data=currentMeasurements();
+  $('showMeasurements').checked=state.measurements;
+  $('measurementContent').hidden=!state.measurements;
+  $('measurementOptions').hidden=!data;
+  $('measurementValues').hidden=!data;
+  $('measurementEquations').hidden=!data;
+  $('settlingTolerance').value=String(state.tolerance);
+  $('measurementNotice').textContent=state.type!=='step'?'These specifications describe a step response with a finite final value. Select Unit step to use them.':!data?'This response has no finite final value, so the usual step specifications do not apply. Select positive damping to measure overshoot and settling.':'Select the markers to show. Choose “Step detail” on the time graph for a closer look. Values use the full response, even when a time lies beyond the visible window.';
+  for(const key of ['td','tr','tp','mp','ts','envelope']){
+    $('mark_'+key).checked=state.marks[key];
+    $('mark_'+key).disabled=!data||((key==='tp'||key==='mp'||key==='envelope')&&!data.under);
+  }
+  if(!data)return;
+  const time=t=>fmt(t)+' s',beyond=t=>t>state.duration?' · beyond window':'';
+  const values={td:time(data.td),tr:time(data.tr),tp:data.tp===null?'No peak':time(data.tp),mp:fmt(data.mp*100,2)+'%',ts:time(data.ts)};
+  const notes={td:'First reaches 50%'+beyond(data.td),tr:(data.under?'0–100%':'10–90%')+beyond(data.riseEnd),tp:data.tp===null?'Monotonic response':'First overshoot peak'+beyond(data.tp),mp:data.under?'Above the final value, 1':'No overshoot',ts:'Stays within ±'+fmt(state.tolerance*100)+'%'+beyond(data.ts)};
+  for(const key of ['td','tr','tp','mp','ts']){$('value_'+key).textContent=values[key];$('note_'+key).textContent=notes[key];}
+  const W='ω<sub>n</sub>',D='ω<sub>d</sub>';
+  const tdFormula=state.modelId==='firstOrder'?'t<sub>d</sub> = T ln 2':'c(t<sub>d</sub>) = 0.5';
+  $('formula_td').innerHTML=tdFormula;
+  $('formulaNote_td').textContent=state.modelId==='firstOrder'?'Exact for this first-order system.':'The first positive solution is found numerically from the displayed c(t).';
+  $('formula_tr').innerHTML=data.under?`t<sub>r</sub> = ${fraction('π − β',D)}`:state.modelId==='firstOrder'?'t<sub>r</sub> = T ln 9':'t<sub>r</sub> = t<sub>90%</sub> − t<sub>10%</sub>';
+  $('formulaNote_tr').innerHTML=data.under?'0–100% rise time; β = cos<sup>−1</sup>(ζ), in radians.':'10–90% rise time. A monotonic response approaches 100% asymptotically.';
+  $('formula_tp').innerHTML=data.under?`t<sub>p</sub> = ${fraction('π',D)}`:'No finite overshoot peak';
+  $('formula_mp').innerHTML=data.under?'M<sub>p</sub> = e<sup>−πζ / √(1 − ζ²)</sup> × 100%':'M<sub>p</sub> = 0%';
+  $('formulaNote_mp').innerHTML='M<sub>p</sub> = [c(t<sub>p</sub>) − c(∞)] / c(∞) × 100%, with c(∞) = 1.';
+  $('formula_ts').innerHTML=data.under?`t<sub>s</sub> ≈ ${fraction(state.tolerance===.02?'4':'3','ζ'+W)} = ${time(data.approx)}`:state.modelId==='firstOrder'?`t<sub>s</sub> = −T ln(${state.tolerance})`:'c(t<sub>s</sub>) = '+fmt(1-state.tolerance);
+  $('formulaNote_ts').textContent=data.under?'Lecture approximation for the '+fmt(state.tolerance*100)+'% criterion. The graph marker uses the actual last band crossing: '+time(data.ts)+'. The approximation can differ, especially near critical damping.':'The graph marks the exact band entry, found from the response. A monotonic stable response stays inside afterwards.';
+  $('formula_envelope').innerHTML=data.under?`1 ± ${fraction('e<sup>−ζω<sub>n</sub>t</sup>','√(1 − ζ²)')}`:'No oscillatory envelope';
+  $('formulaNote_envelope').innerHTML=data.under?`Envelope time constant: T<sub>env</sub> = ${fraction('1','ζ'+W)} = ${time(1/(state.params.zeta*state.params.wn))}.`:'The oscillatory envelope expression applies only to 0 < ζ < 1.';
+}
+function drawMeasurementBand(svg,{x,y,low,high,m,W,H}){
+  const data=currentMeasurements();if(!state.measurements||!data)return;
+  const group=svgElement('g',{id:'measurementBand','clip-path':'url(#plotClip)'});
+  if(state.marks.ts){
+    group.append(svgElement('rect',{x:x(0),y:y(1+data.tolerance),width:x(state.duration)-x(0),height:y(1-data.tolerance)-y(1+data.tolerance),fill:'#e4f1db'}));
+    for(const level of [1-data.tolerance,1+data.tolerance])group.append(svgElement('line',{x1:x(0),x2:x(state.duration),y1:y(level),y2:y(level),stroke:'#719951','stroke-width':1,'stroke-dasharray':'4 4'}));
+  }
+  if(state.marks.envelope&&data.under){
+    for(const sign of [-1,1]){
+      let d='',inside=false;
+      for(let i=0;i<=700;i++){
+        const t=state.duration*i/700,v=1+sign*Math.exp(-state.params.zeta*state.params.wn*t)/Math.sqrt(1-state.params.zeta**2);
+        if(v<low||v>high){inside=false;continue;}
+        d+=(inside?'L':'M')+x(t)+' '+y(v)+' ';inside=true;
+      }
+      group.append(svgElement('path',{d,fill:'none',stroke:'#94a096','stroke-width':1.5,'stroke-dasharray':'6 4'}));
+    }
+  }
+  svg.append(group);
+}
+function drawMeasurementMarkers(svg,{x,y,low,high,m,W,H}){
+  const data=currentMeasurements();if(!state.measurements||!data)return;
+  const group=svgElement('g',{id:'measurementMarkers','pointer-events':'none','clip-path':'url(#plotClip)'});
+  const line=(x1,y1,x2,y2,color,dash='4 4')=>group.append(svgElement('line',{x1,y1,x2,y2,stroke:color,'stroke-width':1.4,'stroke-dasharray':dash}));
+  const label=(px,py,text,color,anchor='start')=>group.append(svgElement('text',{x:px,y:py,fill:color,'font-size':11,'font-weight':650,'text-anchor':anchor,stroke:'white','stroke-width':4,'paint-order':'stroke'},text));
+  const entries=[['td',data.td,.5,'t_d','#426ca4'],['tr',data.riseEnd,data.under?1:.9,'t_r','#9d6b23'],['tp',data.tp,1+data.mp,'t_p','#a64959'],['ts',data.ts,model().sample(data.ts,state.params,'step').c,'t_s','#527b35']];
+  entries.forEach(([key,t,value,symbol,color],i)=>{
+    if(!state.marks[key]||t===null||t>state.duration||(key==='tp'&&!data.under))return;
+    const px=x(t),py=y(value),top=m.top+14+i*19;
+    line(px,top+5,px,y(0),color);
+    group.append(svgElement('circle',{cx:px,cy:py,r:4,fill:color,stroke:'white','stroke-width':1.5}));
+    const right=px>W-m.right-85;
+    const timeLabel=svgElement('text',{x:px+(right?-5:5),y:top,fill:color,'font-size':11,'font-weight':650,'text-anchor':right?'end':'start',stroke:'white','stroke-width':4,'paint-order':'stroke'});
+    timeLabel.append(svgElement('tspan',{},'t'),svgElement('tspan',{'baseline-shift':'sub','font-size':8},key[1]),svgElement('tspan',{},' '+fmt(key==='tr'?data.tr:t,2)+' s'));group.append(timeLabel);
+    if(key==='td')line(x(0),y(.5),px,y(.5),color);
+    if(key==='tr'){
+      line(x(data.riseStart),y(-.06),px,y(-.06),color,'');
+      for(const edge of [data.riseStart,data.riseEnd])line(x(edge),y(-.06)-4,x(edge),y(-.06)+4,color,'');
+      if(!data.under){line(x(data.riseStart),y(.1),x(data.riseStart),y(-.06),color);line(x(0),y(.9),px,y(.9),color);}
+    }
+  });
+  if(state.marks.mp&&data.under&&data.tp<=state.duration){
+    const px=x(data.tp)+12,color='#a64959',top=y(1+data.mp),base=y(1);
+    line(px,top,px,base,color,'');line(px-4,top,px+4,top,color,'');line(px-4,base,px+4,base,color,'');
+    const right=px>W-m.right-100;
+    label(px+(right?-9:9),top-10,'Mₚ '+fmt(data.mp*100,1)+'%',color,right?'end':'start');
+  }
+  if(state.marks.ts)label(W-m.right-6,y(1+data.tolerance)-7,'±'+fmt(data.tolerance*100)+'% band','#527b35','end');
+  svg.append(group);
+}
+
+
+  function renderEquations() {
+    const selected = model(), input = inputTypes[state.type], response = selected.getResponse?selected.getResponse(state.params,state.type):selected.responses[state.type];
+    const notes = selected.describe(state.params, state.type), {T} = state.params;
+    const second=state.modelId==='secondOrder', current=second?secondOrderCase(state.params):{name:'First-order',label:'Stable · first order',tone:'stable'};
+    $('firstOrderControls').hidden=second;$('secondOrderControls').hidden=!second;$('polePanel').hidden=!second;$('geometryDetails').hidden=!second;$('caseExplanation').hidden=!second;
+    $('labContent').classList.toggle('model-second',second);
+    $('systemModel').value=state.modelId;
+    $('systemTitle').textContent=second?'Second-order system':'First-order system';
+    $('stabilityText').textContent=current.label;
+    for(const tone of ['unstable','marginal'])$('stabilityBadge').classList.toggle(tone,current.tone===tone);
+    $('tauValue').textContent = T.toFixed(1)+' s';
+    $('tau').value=T;$('zeta').value=state.params.zeta;$('wn').value=state.params.wn;
+    $('zetaValue').textContent=state.params.zeta.toFixed(2);$('wnValue').textContent=state.params.wn.toFixed(1)+' rad/s';
+    $('forwardNum').textContent=selected.forwardNumerator||'1';
+    $('forwardDen').textContent = selected.forwardDenominator;
+    $('forwardDen').setAttribute('font-size',second?'17':'27');
+    $('closedNum').innerHTML=selected.closedNumerator||'1';
+    $('closedDen').innerHTML = selected.closedDenominator;
+    $('feedbackTitle').textContent=second?'Second-order unity negative-feedback system':'First-order unity negative-feedback system';
+    $('feedbackDesc').textContent='R(s) enters the summing junction. E(s) passes through G(s). Negative unity feedback returns C(s) to the junction. '+(second?'G(s) is omega n squared over s times s plus 2 zeta omega n.':'G(s) is one over T s.');
+    $('inputName').textContent = input.name;
+    $('timeInput').innerHTML = 'r(t) = '+input.time;
+    $('laplaceInput').innerHTML = 'R(s) = '+input.laplace;
+    $('timeOutput').innerHTML = 'c(t) = '+response.output;
+    $('sOutput').innerHTML = 'C(s) = '+response.outputS;
+    $('errorExpression').innerHTML = 'e(t) = '+response.error;
+    $('sError').innerHTML = 'E(s) = '+response.errorS;
+    $('equationDefinitions').innerHTML=response.definitions||'';
+    $('planeView').value=state.planeView;$('verticalView').value=state.verticalView;
+    $('stepDetailOption').disabled=state.type!=='step';
+    $('essSymbol').innerHTML = response.ess;
+    const finalError=selected.finalError(state.params,state.type);
+    $('essSymbol').classList.toggle('no-limit',finalError===null);
+    $('essCurrent').textContent=state.type==='ramp'&&finalError!==null?'= '+fmt(finalError):'';
+    $('essDescription').textContent = notes.essNote;
+    $('insightTitle').textContent = notes.insightTitle;
+    $('insightText').textContent = notes.insight;
+    $('poleSummary').innerHTML=second?'p<sub>1,2</sub> = −ζω<sub>n</sub> ± ω<sub>n</sub>√(ζ² − 1)':'s = −1/T';
+    $('poleValue').textContent = second?secondOrderGeometry(state.params).poles.map(formatPole).join(' ; '):'Current pole: −'+fmt(1/T)+' s⁻¹';
+    $('plotInfo').textContent = state.type==='impulse'?'The impulse arrow is symbolic. For t > 0, r(t) = 0, and the violet line shows e(t) = −c(t). At the origin the cursor shows the right-hand limit; the ideal impulse has no finite error value at t = 0.':'The violet vertical line shows the signed tracking error e(t) = r(t) − c(t) at the time cursor.';
+    $('fvtNote').textContent = second?(state.params.zeta<=0?'Do not apply the final value theorem: sE(s) has poles on the imaginary axis or in the right half-plane. A formal s = 0 substitution would not give the actual long-time error.':'The poles of sE(s) are in the left half-plane. The final value theorem gives '+(state.type==='ramp'?'2ζ/ωₙ.':'0.')):'For these inputs, the remaining finite pole of sE(s) is −1/T. Since T > 0, it lies in the left half-plane and the final value theorem gives '+(state.type === 'ramp' ? 'T.' : '0.')+(state.type === 'impulse' ? ' The ideal impulse acts only at t = 0; its decaying error tail determines the long-time limit.' : ' Check the poles before applying this theorem.');
+    document.querySelectorAll('[data-input]').forEach(button => {
+      const active = button.dataset.input === state.type;
+      button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
+    });
+    document.querySelectorAll('[data-zeta]').forEach(button=>{
+      const active=second&&state.type==='step'&&state.params.wn===1&&state.params.zeta===+button.dataset.zeta;
+      button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
+    });
+  }
+
+  const graph = {width:800,height:300,margin:{left:44,right:18,top:30,bottom:40}};
+  function niceStep(span) {
+    const raw=span/5, scale=10**Math.floor(Math.log10(raw)), base=raw/scale;
+    return (base<=1?1:base<=2?2:base<=2.5?2.5:base<=5?5:10)*scale;
+  }
+
+  function renderChart() {
+    const svg=$('chart');
+    if (svg.clientWidth > 0) {
+      graph.width=Math.max(280,Math.round(svg.clientWidth));
+      graph.height=Math.max(230,Math.min(300,(typeof window!=='undefined'?window.innerHeight:780)-480));
+      graph.margin.left=44;
+      svg.setAttribute('viewBox',`0 0 ${graph.width} ${graph.height}`);
+    }
+    const {width:W,height:H,margin:m}=graph;
+    const {type,duration,probe}=state, {T}=state.params;
+    const plotWidth=W-m.left-m.right, plotHeight=H-m.top-m.bottom;
+    svg.replaceChildren(
+      svgElement('title',{id:'chartTitle'},inputTypes[type].name+' response, '+(state.modelId==='firstOrder'?'T = '+fmt(T)+' seconds':'ζ = '+fmt(state.params.zeta)+', ωₙ = '+fmt(state.params.wn)+' rad/s')),
+      svgElement('desc',{id:'chartDesc'},'Dashed orange input, solid teal output, and a vertical violet line measuring their separation at the time cursor. Time runs from 0 to '+duration+' seconds.')
+    );
+    const points=Array.from({length:701},(_,i)=>{const t=duration*i/700;return {t,...sample(t)};});
+    // Comparable scales: no limits depend on the moving response or damping ratio.
+    // The ramp reference sets its range when the user changes the time window;
+    // the second-order impulse range follows omega_n, since its size scales with it.
+    const second=state.modelId==='secondOrder';
+    let bounds=type==='step'?(second?[-2,4]:[-.1,1.2]):type==='ramp'?[-2,duration+2]:second?[-2*state.params.wn,2*state.params.wn]:[-.1,5.5];
+    if(state.verticalView==='detail'&&type==='step')bounds=[-.15,1.85];
+    const expansion=state.verticalView==='wide'?3:state.verticalView==='veryWide'?10:1;
+    const midpoint=(bounds[0]+bounds[1])/2,half=(bounds[1]-bounds[0])*expansion/2;
+    bounds=[midpoint-half,midpoint+half];
+    const [low,high]=bounds;
+    svg.setAttribute('data-y-min',low);svg.setAttribute('data-y-max',high);svg.setAttribute('data-time-max',duration);
+    const offScale=points.some(p=>p.c<low||p.c>high);
+    $('plotScaleNote').textContent='Fixed y-axis: '+fmt(low)+' to '+fmt(high)+(offScale?' · Output exceeds this range; choose a wider view.':' · No auto-zoom.');
+    $('plotScaleNote').classList.toggle('off-scale',offScale);
+    const x=t=>m.left+t/duration*plotWidth, y=v=>m.top+(high-v)/(high-low)*plotHeight;
+    const defs=svgElement('defs'), clip=svgElement('clipPath',{id:'plotClip'});
+    clip.append(svgElement('rect',{x:m.left-1,y:m.top-1,width:plotWidth+2,height:plotHeight+2}));defs.append(clip);
+    const impulseArrow=svgElement('marker',{id:'impulseArrow',viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:7,markerHeight:7,orient:'auto'});
+    impulseArrow.append(svgElement('path',{d:'M0 0L10 5L0 10Z',fill:'#be681f'}));defs.append(impulseArrow);svg.append(defs);
+    const yStep=niceStep(high-low);
+    for(let value=Math.ceil(low/yStep)*yStep;value<=high+yStep*1e-7;value+=yStep) {
+      svg.append(svgElement('line',{x1:m.left,x2:W-m.right,y1:y(value),y2:y(value),class:'gridline'}));
+      svg.append(svgElement('text',{x:m.left-12,y:y(value)+4,'text-anchor':'end',class:'tick'},fmt(value)));
+    }
+    const xStep=duration===16?4:niceStep(duration);
+    for(let t=0;t<=duration+1e-7;t+=xStep) {
+      svg.append(svgElement('line',{x1:x(t),x2:x(t),y1:m.top,y2:H-m.bottom,class:'gridline'}));
+      svg.append(svgElement('text',{x:x(t),y:H-m.bottom+22,'text-anchor':'middle',class:'tick'},fmt(t)));
+    }
+    svg.append(svgElement('line',{x1:m.left,x2:W-m.right,y1:y(0),y2:y(0),stroke:'#b6c5c9','stroke-width':1}));
+    svg.append(svgElement('text',{x:15,y:16,class:'axis-title'},'Signal value'));
+    svg.append(svgElement('text',{x:m.left+plotWidth/2,y:H-7,'text-anchor':'middle',class:'axis-title'},'Time, t (seconds)'));
+    const curves=svgElement('g',{'clip-path':'url(#plotClip)'});
+    drawMeasurementBand(svg,{x,y,low,high,m,W,H});
+    // Clip line segments rather than flattening out-of-range values at the edge.
+    // Large unstable responses stay truthful without forcing the axes to zoom.
+    const pathFor=key=>{
+      const commands=[];let last='';
+      for(let i=1;i<points.length;i++){
+        const a=points[i-1],b=points[i],av=a[key],bv=b[key];
+        if((av<low&&bv<low)||(av>high&&bv>high)){last='';continue;}
+        const aClip=av<low?low:av>high?high:av,bClip=bv<low?low:bv>high?high:bv;
+        const from=av===aClip?0:(aClip-av)/(bv-av),to=bv===bClip?1:(bClip-av)/(bv-av);
+        const start=x(a.t+(b.t-a.t)*from).toFixed(2)+' '+y(aClip).toFixed(2),end=x(a.t+(b.t-a.t)*to).toFixed(2)+' '+y(bClip).toFixed(2);
+        if(start!==last)commands.push('M'+start);commands.push('L'+end);last=end;
+      }
+      return commands.join(' ');
+    };
+    const referencePath=type === 'step' ? `M${x(0)} ${y(0)}V${y(1)}H${x(duration)}` : pathFor('r');
+    curves.append(svgElement('path',{d:referencePath,class:'curve',stroke:'#be681f','stroke-dasharray':'8 6'}));
+    curves.append(svgElement('path',{d:pathFor('c'),class:'curve',stroke:'#087e80'}));
+    svg.append(curves);
+    drawMeasurementMarkers(svg,{x,y,low,high,m,W,H});
+    if(type === 'impulse') {
+      svg.append(svgElement('line',{x1:x(0),x2:x(0),y1:y(0),y2:m.top+10,stroke:'#be681f','stroke-width':2.5,'marker-end':'url(#impulseArrow)'}));
+      svg.append(svgElement('text',{x:x(0)+12,y:m.top+7,fill:'#be681f',class:'annotation'},'δ(t) · ideal unit impulse'));
+    }
+    const at=sample(probe), cursor=svgElement('g');
+    cursor.append(svgElement('line',{x1:x(probe),x2:x(probe),y1:m.top,y2:H-m.bottom,stroke:'#9baeb4','stroke-dasharray':'3 5','stroke-width':1.2}));
+    const visibleR=Math.max(low,Math.min(high,at.r)),visibleC=Math.max(low,Math.min(high,at.c)),cursorOffScale=at.c<low||at.c>high;
+    cursor.append(svgElement('line',{id:'errorGap',x1:x(probe),x2:x(probe),y1:y(visibleR),y2:y(visibleC),stroke:'#8064b2','stroke-width':3,'stroke-linecap':'round','data-off-scale':cursorOffScale}));
+    cursor.append(svgElement('circle',{cx:x(probe),cy:y(visibleR),r:4,fill:'#be681f',stroke:'white','stroke-width':2}));
+    cursor.append(svgElement('text',{x:Math.min(x(probe)+9,W-m.right-100),y:Math.max(m.top+14,Math.min(y(visibleR),y(visibleC))-9),fill:'#8064b2',class:'annotation'},cursorOffScale?'e(t) off scale':type==='impulse'&&probe===0?'e(0⁺)':'e(t)'));
+    if(cursorOffScale){
+      const px=x(probe),py=y(visibleC),dy=at.c>high?1:-1;
+      cursor.append(svgElement('path',{id:'offScaleMarker',d:`M${px-5} ${py+dy*7}L${px} ${py}L${px+5} ${py+dy*7}`,fill:'none',stroke:'#087e80','stroke-width':2.5}));
+    }else cursor.append(svgElement('circle',{cx:x(probe),cy:y(at.c),r:5,fill:'#087e80',stroke:'white','stroke-width':2}));
+    svg.append(cursor);
+    svg.append(svgElement('rect',{x:m.left,y:m.top,width:plotWidth,height:plotHeight,fill:'transparent',id:'plotHit',style:'cursor:crosshair'}));
+  }
+
+  function renderReadouts() {
+    const at=sample(state.probe), atImpulse=inputTypes[state.type].singularAtOrigin && state.probe === 0;
+    $('probeValue').textContent=state.probe.toFixed(2)+' s';
+    $('readInput').textContent=atImpulse?'δ at t = 0':at.r.toFixed(3);
+    $('readOutput').textContent=at.c.toFixed(3)+(atImpulse?' (0⁺)':'');
+    $('readError').textContent=atImpulse?'δ + tail':at.e.toFixed(3);
+  }
+  function render() {renderEquations();renderPolePlane();renderMeasurements();renderChart();renderReadouts();}
+  function stop() {running=false;cancelAnimationFrame(frameId);$('play').textContent='▶ Play';$('play').setAttribute('aria-label','Animate time cursor');}
+  function setProbe(t) {state.probe=Math.max(0,Math.min(state.duration,t));$('probe').value=state.probe;renderChart();renderReadouts();}
+
+  document.querySelectorAll('[data-input]').forEach(button=>button.addEventListener('click',()=>{stop();state.type=button.dataset.input;if(state.type!=='step'&&state.verticalView==='detail')state.verticalView='standard';render();}));
+  $('systemModel').addEventListener('change',event=>{stop();state.modelId=event.target.value;render();});
+  $('tau').addEventListener('input',event=>{state.params.T=+event.target.value;render();});
+  $('zeta').addEventListener('input',event=>{state.params.zeta=+event.target.value;render();});
+  $('wn').addEventListener('input',event=>{state.params.wn=+event.target.value;render();});
+  $('planeView').addEventListener('change',event=>{state.planeView=event.target.value;renderPolePlane();});
+  $('verticalView').addEventListener('change',event=>{state.verticalView=event.target.value;renderChart();});
+  $('showMeasurements').addEventListener('change',event=>{state.measurements=event.target.checked;render();});
+  $('settlingTolerance').addEventListener('change',event=>{state.tolerance=+event.target.value;render();});
+  for(const key of ['td','tr','tp','mp','ts','envelope'])$('mark_'+key).addEventListener('change',event=>{state.marks[key]=event.target.checked;render();});
+  document.querySelectorAll('[data-zeta]').forEach(button=>button.addEventListener('click',()=>{
+    stop();state.params.zeta=+button.dataset.zeta;state.params.wn=1;state.type='step';state.duration=16;state.probe=1;
+    $('duration').value=16;$('probe').max=16;$('probe').value=1;render();
+  }));
+  $('duration').addEventListener('change',event=>{stop();state.duration=+event.target.value;$('probe').max=state.duration;state.probe=Math.min(state.probe,state.duration);$('probe').value=state.probe;render();});
+  $('probe').addEventListener('input',event=>{stop();setProbe(+event.target.value);});
+  function probeAtPointer(event) {
+    const matrix=$('chart').getScreenCTM();if(!matrix)return;
+    const point=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());
+    const {width,height,margin:m}=graph;
+    if(point.x>=m.left && point.x<=width-m.right && point.y>=m.top && point.y<=height-m.bottom) {stop();setProbe((point.x-m.left)/(width-m.left-m.right)*state.duration);}
+  }
+  $('chart').addEventListener('pointermove',event=>{if(event.pointerType==='mouse')probeAtPointer(event);});
+  $('chart').addEventListener('pointerdown',probeAtPointer);
+  $('play').addEventListener('click',()=>{
+    if(running){stop();return;}
+    if(state.probe>=state.duration-.02)setProbe(0);
+    running=true;lastFrame=performance.now();$('play').textContent='Ⅱ Pause';$('play').setAttribute('aria-label','Pause time cursor');
+    function frame(now) {const dt=Math.min((now-lastFrame)/1000,.1);lastFrame=now;setProbe(state.probe+dt*state.duration/10);if(state.probe>=state.duration){stop();return;}if(running)frameId=requestAnimationFrame(frame);}
+    frameId=requestAnimationFrame(frame);
+  });
+  $('reset').addEventListener('click',()=>{
+    stop();Object.assign(state,initialState(state.modelId));$('tau').value=state.params.T;$('duration').value=state.duration;$('probe').max=state.duration;$('probe').value=state.probe;render();
+  });
+  $('download').addEventListener('click',()=>{
+    const clone=document.documentElement.cloneNode(true);
+    const blob=new Blob(['<!doctype html>\n'+clone.outerHTML],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob), link=document.createElement('a');
+    link.href=url;link.download='control-systems-lab.html';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+  if(typeof window !== 'undefined')window.addEventListener('resize',renderChart);
+  render();
+})();
+</script>
+</body>
+</html>
